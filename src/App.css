@@ -28,6 +28,31 @@
   color: #61dafb;
 }
 
+.navbar {
+  display: flex;
+  align-items: center;
+  background-color: black;
+  color: white;
+  height: 60px;
+  width: 100%;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  margin: 30px;
+}
+
+.nav-link {
+  font-size: 25px;
+  color: white;
+}
+
+.nav-ul {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

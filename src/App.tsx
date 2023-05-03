@@ -15,13 +15,13 @@ function App() {
     <div className="App">
       <Router>
         <div>
-          <nav>
-            <ul>
-              <li>
-                <Link to="/">Home</Link>
+          <nav className="navbar">
+            <ul className="nav-ul">
+              <li className = "nav-item">
+                <Link to="/" className="nav-link">Home</Link>
               </li>
-              <li>
-                <Link to="/films">Films</Link>
+              <li className = "nav-item">
+                <Link to="/films" className="nav-link">Films</Link>
               </li>
             </ul>
           </nav>
