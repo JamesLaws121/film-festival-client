@@ -14,7 +14,7 @@ function GetFilms() {
     }, [])
 
     const getFilms = () => {
-        axios.get('http://localhost:3000/api/users')
+        axios.get('http://localhost:3000/api/films')
             .then((response) => {
                 setErrorFlag(false)
                 setErrorMessage("")
@@ -44,7 +44,6 @@ function GetFilms() {
         if (errorFlag) {
             return (
                 <div>
-                    <h1>Users</h1>
                     <div style={{ color: "red" }}>
                         {errorMessage}
                     </div>

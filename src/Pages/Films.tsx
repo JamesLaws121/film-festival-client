@@ -8,6 +8,11 @@ const Films = () => {
     return (
         <div>
             <h1>Films</h1>
+            <div className="searchBar">
+                <input type="search" placeholder="search" id="searchInput"/>
+                <button></button>
+            </div>
+
             <GetFilms />
         </div>
     )
