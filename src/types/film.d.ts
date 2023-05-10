@@ -2,7 +2,7 @@ type Film = {
     /**
      * Film as defined by the database
      */
-    id: number,
+    filmId: number,
     title : string,
     description : string,
     release_date : Date,

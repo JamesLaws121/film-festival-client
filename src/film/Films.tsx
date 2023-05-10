@@ -21,7 +21,10 @@ const Films = () => {
                     </div>
                 </div>
             </body>
-            <FilmTable />
+            <div style={{display: "flex"}}>
+                <FilmTable />
+            </div>
+
         </div>
     )
 }

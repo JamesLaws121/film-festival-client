@@ -24,13 +24,29 @@ const FilmTable = () => {
             })
     }
 
-    function FilmsList() {
+    const getFilmImage = (film_id: string) => {
+        axios.get('http://localhost:4941/api/' + film_id + '/image')
+            .then((response) => {
+                setErrorFlag(false)
+                setErrorMessage("")
+                return response;
+            }, (error) => {
+                setErrorFlag(true)
+                setErrorMessage(error.toString())
+            })
+    }
 
-        return films.map((value: Film) =>
-            <tr key={value.id}>
-                <div className="card">
-                    <Link to={"/films/" + value.id}>
-                        <img src="../public/logo192.png" className="card-img-top" alt="../public/logo192.png"></img>
+    function FilmsList() {
+        let filmList = []
+        let filmRow;
+        for (let i = 0; i < films.length; i += 3) {
+            let tmpFilms = films.slice(i, i + 3);
+
+            filmRow = tmpFilms.map((value: Film, index) =>
+                <div className="card col-sm">
+                    <Link to={"/films/" + value.filmId}>
+                        <img src={"http://localhost:4941/api/v1/films/" + value.filmId + "/image"}
+                             className="card-img-top" alt="Card image cap"></img>
                     </Link>
                     <div className="card-body">
                         <h5 className="card-title">{value.title}</h5>
@@ -40,8 +56,11 @@ const FilmTable = () => {
                         <button type="button">Edit</button>
                     </div>
                 </div>
-            </tr>
-        )
+            )
+
+            filmList.push(<div className={"row"}>{filmRow}</div>);
+        }
+        return filmList;
     }
 
     if (errorFlag) {
@@ -54,20 +73,8 @@ const FilmTable = () => {
         )
     } else {
         return (
-            <div>
-                <table className="table">
-                    <thead>
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {FilmsList()}
-                    </tbody>
-                </table>
+            <div className={"card-deck"}>
+                {FilmsList()}
             </div>
         )
     }
