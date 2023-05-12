@@ -1,23 +1,19 @@
 import axios from "axios";
 import React from "react";
-import FilmTable from "./FilmTable";
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 
-const Films = () => {
+const ViewFilm = () => {
     return (
         <div>
-            <h1>Films</h1>
-
-            <div style={{display: "flex"}}>
-                <FilmTable />
-            </div>
-
+            <h1>Film</h1>
+            <body>
+            </body>
         </div>
     )
 }
 
 
-export default Films;
+export default ViewFilm;

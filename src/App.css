@@ -52,3 +52,11 @@ input[type="search"] {
 .card {
   width: 18rem;
 }
+
+.dropdown:hover>.dropdown-menu {
+  display: block;
+}
+
+.dropdown>.dropdown-toggle:active {
+  pointer-events: none;
+}

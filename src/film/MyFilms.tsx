@@ -3,15 +3,16 @@ import React from "react";
 import '../App.css';
 
 
-const Users = () => {
+
+const MyFilms = () => {
     return (
         <div>
-            <h1>Users</h1>
+            <h1>My Film</h1>
             <body>
+            <p> Film name: </p>
             </body>
         </div>
     )
 }
 
-
-export default Users;
+export default MyFilms;

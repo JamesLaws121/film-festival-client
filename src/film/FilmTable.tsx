@@ -2,11 +2,13 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import axios from "axios";
+import {forEach} from "react-bootstrap/ElementChildren";
 
 const FilmTable = () => {
-    const [films, setFilms] = React.useState <Array<Film>>([])
+    let [films, setFilms] = React.useState <Array<Film>>([])
     const [errorFlag, setErrorFlag] = React.useState(false)
     const [errorMessage, setErrorMessage] = React.useState("")
+    const [searchInput, setSearch] = React.useState("");
 
     React.useEffect(() => {
         GetFilms()
@@ -23,18 +25,17 @@ const FilmTable = () => {
                 setErrorMessage(error.toString())
             })
     }
+    function searchFilms() {
+        let filmList = [];
 
-    const getFilmImage = (film_id: string) => {
-        axios.get('http://localhost:4941/api/' + film_id + '/image')
-            .then((response) => {
-                setErrorFlag(false)
-                setErrorMessage("")
-                return response;
-            }, (error) => {
-                setErrorFlag(true)
-                setErrorMessage(error.toString())
-            })
+        filmList = films.filter(film => {
+            film.description.includes(searchInput) || film.title.includes(searchInput)
+        });
+        films = filmList;
     }
+    const handleSearch = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+        setSearch(event.target.value);
+    };
 
     function FilmsList() {
         let filmList = []
@@ -72,10 +73,20 @@ const FilmTable = () => {
             </div>
         )
     } else {
-        return (
-            <div className={"card-deck"}>
-                {FilmsList()}
-            </div>
+            return (
+                <div>
+                    <div className="container">
+                        <div className="input-group search-container form-control">
+                            <input type="search" placeholder="search" id="searchInput" value={searchInput} onChange={handleSearch}/>
+                            <button className="search-button" onClick={searchFilms}>
+                                <i className="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div className={"card-deck"}>
+                        {FilmsList()}
+                    </div>
+                </div>
         )
     }
 }
