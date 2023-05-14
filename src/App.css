@@ -58,3 +58,8 @@ input[type="search"] {
 .dropdown>.dropdown-toggle:active {
   pointer-events: none;
 }
+
+p {
+  margin-top: 20px;
+  margin-bottom: 0;
+}

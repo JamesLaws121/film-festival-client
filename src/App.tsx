@@ -10,6 +10,8 @@ import Login from "./common/Login";
 import EditFilm from "./film/EditFilm";
 import CreateFilm from "./film/CreateFilm";
 import MyFilms from "./film/MyFilms";
+import ViewFilm from "./film/ViewFilm";
+import EditProfile from "./user/EditProfile";
 
 const App = () => {
   return (
@@ -43,13 +45,15 @@ const App = () => {
                 </ul>
             </nav>
             <Routes>
+                <Route path="/film" element={<ViewFilm/>}/>
                 <Route path="/myfilms" element={<MyFilms/>}/>
                 <Route path="/editfilm" element={<EditFilm/>}/>
                 <Route path="/createfilm" element={<CreateFilm/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>
-                <Route path="/films" element={<Films/>}/>
                 <Route path="/profile" element={<Profile/>}/>
+                <Route path="/editProfile" element={<EditProfile/>}/>
+                <Route path="/films" element={<Films/>}/>
                 <Route path="*" element={<Films/>}/>
             </Routes>
         </Router>

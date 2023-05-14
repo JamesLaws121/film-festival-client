@@ -1,15 +1,16 @@
 import axios from "axios";
 import React from "react";
 import '../App.css';
+import Films from "./Films";
 
 
 
 const MyFilms = () => {
     return (
         <div>
-            <h1>My Film</h1>
+            <h1>My Films</h1>
             <body>
-            <p> Film name: </p>
+            {Films()}
             </body>
         </div>
     )
