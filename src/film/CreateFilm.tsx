@@ -9,7 +9,7 @@ const CreateFilm = () => {
         <div>
             <h1>Create Film</h1>
             <form>
-                    <div className="card container py-5">
+                <div className="card container py-5">
                 <div className="row g-2">
                     <div className="form-group col-md-6">
                         <label className="medium mb-1" htmlFor="titleInput">Title</label>
@@ -49,9 +49,8 @@ const CreateFilm = () => {
                         <input type="file" className="form-control" id="imageInput"></input>
                     </div>
                 </div>
-
+                </div>
                 <button type="submit" className="btn btn-primary">Submit</button>
-                    </div>
             </form>
         </div>
     )
