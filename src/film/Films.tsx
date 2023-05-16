@@ -110,9 +110,12 @@ const Films = () => {
                         <img src={"https://seng365.csse.canterbury.ac.nz/api/v1/films/" + value.filmId + "/image"}
                              className="card-img-top" alt="Card image cap"></img>
                     </Link>
-                    <div className="card-body">
+                    <div className="card-body film-card-body">
                         <h5 className="card-title">{value.title}</h5>
-                        <p className="card-text">{value.description}</p>
+                        <p className="card-text">{value.ageRating}</p>
+                        <p className="card-text">Release: {value.releaseDate.toString().split('T')[0]}</p>
+                        <p className="card-text">Director: {value.directorFirstName + " " + value.directorLastName}</p>
+                        <p className="card-text">{value.rating + " Out of 10 from average user scores"}</p>
                     </div>
                 </div>
             )
@@ -131,7 +134,7 @@ const Films = () => {
     }
     function getAgeRatingContent() {
         return (["G", "PG", "M", "R13", "R16", "R18", "TBC"].map((rating) =>
-                <div className="form-check" key={"rating"}>
+                <div className="form-check" key={rating}>
                     <input type="checkbox" className="form-check-input" name={rating} id={"ageCheck"+rating}
                            value={rating} onClick={() => handleFilterAge(rating)}></input>
                     <label className="form-check-label" htmlFor={"ageCheck"+rating}>{rating}</label>
@@ -144,7 +147,7 @@ const Films = () => {
             <h1>Films</h1>
 
                 <div className="row input-group search-filter">
-                    <div className="col-8 search-container">
+                    <div className="col-9 search-container">
                         <div className="form-control" >
                             <input type="search" placeholder="search" id="searchInput" value={searchInput}
                                    onKeyDown={(input) => handleSearch(input.key, true)} onChange={(searchInput) => handleSearch(searchInput.target.value, false)}/>
@@ -154,8 +157,9 @@ const Films = () => {
                         </div>
 
                     </div>
-
-                    <div className="col-4 dropdown">
+                </div>
+            <div className="row input-group search-filter">
+                    <div className="col-3 dropdown">
                         <button className="form-control dropdown-toggle" type="button"
                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
@@ -166,7 +170,7 @@ const Films = () => {
                         </div>
                     </div>
 
-                    <div className="col-4 dropdown">
+                    <div className="col-3 dropdown">
                         <button className="form-control dropdown-toggle" type="button"
                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
@@ -175,6 +179,17 @@ const Films = () => {
                         <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             {getAgeRatingContent()}
                         </div>
+                    </div>
+
+                    <div className="col-3">
+                        <select className="select form-control">
+                            <option value="ALPHABETICAL_ASC">ALPHABETICAL_ASC</option>
+                            <option value="ALPHABETICAL_DESC">ALPHABETICAL_DESC</option>
+                            <option selected value="RELEASED_ASC">RELEASED_ASC</option>
+                            <option value="RELEASED_DESC">RELEASED_DESC</option>
+                            <option value="RATING_ASC">RATING_ASC</option>
+                            <option value="RATING_DESC">RATING_DESC</option>
+                        </select>
                     </div>
 
                 </div>

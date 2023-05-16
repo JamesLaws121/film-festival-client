@@ -72,6 +72,10 @@ p {
   margin: 20px;
 }
 
+.film-card-body {
+  border: black;
+}
+
 .film-cards {
   justify-content: center;
 }
