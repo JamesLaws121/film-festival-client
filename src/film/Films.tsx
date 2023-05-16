@@ -1,111 +1,190 @@
 
-import React from "react";
+import React, {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
 import axios from "axios";
 import {forEach} from "react-bootstrap/ElementChildren";
 
 const Films = () => {
-    let [films, setFilms] = React.useState <Array<Film>>([])
-    const [errorFlag, setErrorFlag] = React.useState(false)
-    const [errorMessage, setErrorMessage] = React.useState("")
-    const [searchInput, setSearch] = React.useState("");
+    const [films, setFilms] = useState <Array<Film>>([]);
+    const [filmGenres, setFilmGenres] = useState <Array<Genre>>([]);
+    const [errorFlag, setErrorFlag] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [searchInput, setSearch] = useState("");
+    const [genreInput, setGenre] = useState <Array<number>>([]);
+    const [ageInput, setAge] = useState <Array<string>>([]);
 
-    React.useEffect(() => {
-        GetFilms()
-    }, [])
+    const [requestString, setRequestString] = useState("");
 
+    useEffect(() => {
+        GetFilms();
+        GetFilmGenres();
+    }, [genreInput, ageInput])
+
+
+    const createRequestString = () => {
+        let tempRequestString = "";
+        if (genreInput.length !== 0) {
+            for(let i = 0; i < genreInput.length; i++) {
+                tempRequestString += "genreIds=" + genreInput[i] + '&';
+            }
+        }
+        if (ageInput.length !== 0) {
+            for(let i = 0; i < ageInput.length; i++) {
+                tempRequestString += "ageRatings=" + ageInput[i].toString() + '&';
+            }
+        }
+        if (searchInput !== "") {
+            tempRequestString += 'q=' + searchInput;
+        }
+
+        return tempRequestString;
+    }
     const GetFilms = () => {
-        axios.get('http://localhost:4941/api/v1/films')
+        axios.get("https://seng365.csse.canterbury.ac.nz/api/v1/films?" + createRequestString())
             .then((response) => {
-                setErrorFlag(false)
-                setErrorMessage("")
-                setFilms(response.data.films)
+                setErrorFlag(false);
+                setErrorMessage("");
+                setFilms(response.data.films);
+                }, (error) => {
+                setErrorFlag(true);
+                setErrorMessage(error.toString());
+            })
+    }
+    const GetFilmGenres = () => {
+        axios.get('https://seng365.csse.canterbury.ac.nz/api/v1/films/genres')
+            .then((response) => {
+                setErrorFlag(false);
+                setErrorMessage("");
+                setFilmGenres(response.data);
             }, (error) => {
-                setErrorFlag(true)
-                setErrorMessage(error.toString())
+                setErrorFlag(true);
+                setErrorMessage(error.toString());
             })
     }
     function searchFilms() {
-        let filmList = [];
-
-        filmList = films.filter(film => {
-            film.description.includes(searchInput) || film.title.includes(searchInput)
-        });
-        films = filmList;
+        GetFilms();
     }
-    const handleSearch = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-        setSearch(event.target.value);
+    const handleSearch = (event: string, key: boolean) => {
+        if (key) {
+            if(event === "Enter") {
+                GetFilms();
+            }
+        } else {
+            setSearch(event);
+        }
+    };
+
+    const handleFilterGenre = (checkInput: number) => {
+        let tempGenres = new Array<number>;
+        tempGenres = tempGenres.concat(genreInput);
+        if (tempGenres.includes(checkInput)) {
+            tempGenres.splice(tempGenres.indexOf(checkInput), 1);
+        } else {
+            tempGenres.push(checkInput);
+        }
+        setGenre(tempGenres);
+    };
+
+    const handleFilterAge = (checkInput : string) => {
+        let tempAges = new Array<string>;
+        tempAges = tempAges.concat(ageInput);
+        if (tempAges.includes(checkInput)) {
+            tempAges.splice(tempAges.indexOf(checkInput), 1);
+        } else {
+            tempAges.push(checkInput);
+        }
+        setAge(tempAges);
     };
 
     function FilmsList() {
-        let filmList = []
-        let filmRow;
-        for (let i = 0; i < films.length; i += 3) {
-            let tmpFilms = films.slice(i, i + 3);
-
-            filmRow = tmpFilms.map((value: Film, index) =>
-                <div className="card col-sm">
+        if (errorFlag) {
+            return (
+                <div>
+                    <div style={{color: "red"}}>
+                        {errorMessage}
+                    </div>
+                </div>
+            ) } else { return (films.map((value: Film) =>
+                <div className="card col-3 film-card shadow" key={value.filmId}>
                     <Link to={"/films/" + value.filmId}>
-                        <img src={"http://localhost:4941/api/v1/films/" + value.filmId + "/image"}
+                        <img src={"https://seng365.csse.canterbury.ac.nz/api/v1/films/" + value.filmId + "/image"}
                              className="card-img-top" alt="Card image cap"></img>
                     </Link>
                     <div className="card-body">
                         <h5 className="card-title">{value.title}</h5>
-                        <p className="card-text">Some quick example text to build on the card title and make up the bulk
-                            of the card's content.</p>
-                        <button type="button">Delete</button>
-                        <button type="button">Edit</button>
+                        <p className="card-text">{value.description}</p>
                     </div>
                 </div>
             )
-
-            filmList.push(<div className={"row"}>{filmRow}</div>);
+        )
         }
-        return filmList;
     }
+    function getGenreContent() {
+        return (filmGenres.map((genre) =>
+            <div className="form-check" key={"genre"+genre.genreId}>
+                <input type="checkbox" className="form-check-input" name={"genreCheck"+genre.genreId} id={"genreCheck"+genre.genreId}
+                       value={genre.genreId} onClick={() => handleFilterGenre(genre.genreId)}></input>
+                <label className="form-check-label" htmlFor={"genreCheck"+genre.genreId}>{genre.name}</label>
+            </div>
+            )
+        )
+    }
+    function getAgeRatingContent() {
+        return (["G", "PG", "M", "R13", "R16", "R18", "TBC"].map((rating) =>
+                <div className="form-check" key={"rating"}>
+                    <input type="checkbox" className="form-check-input" name={rating} id={"ageCheck"+rating}
+                           value={rating} onClick={() => handleFilterAge(rating)}></input>
+                    <label className="form-check-label" htmlFor={"ageCheck"+rating}>{rating}</label>
+                </div>
+            )
+        )
+    }
+    return (
+        <div style={{width: "100%"}}>
+            <h1>Films</h1>
 
-    if (errorFlag) {
-        return (
-            <div>
-                <div style={{color: "red"}}>
-                    {errorMessage}
-                </div>
-            </div>
-        )
-    } else {
-        return (
-            <div>
-                <h1>Films</h1>
-                <div style={{display: "flex"}}>
-                        <div className="container">
-                            <div className="input-group search-container form-control">
-                                <input type="search" placeholder="search" id="searchInput" value={searchInput} onChange={handleSearch}/>
-                                <button className="search-button" onClick={searchFilms}>
-                                    <i className="bi bi-search"></i>
-                                </button>
-                            </div>
-                            <div className="btn-group" role="group">
-                                <div className="form-check">
-                                    <input type="radio" className="btn-check" name="btnradio" id="btnradio1" defaultChecked></input>
-                                    <label className="btn btn-outline-primary" htmlFor="btnradio1">Radio 1</label>
-                                </div>
-                                <div className="form-check">
-                                    <input type="radio" className="btn-check" name="btnradio" id="btnradio2"></input>
-                                    <label className="btn btn-outline-primary" htmlFor="btnradio2">Radio 2</label>
-                                </div>
-                                <div className="form-check">
-                                    <input type="radio" className="btn-check" name="btnradio" id="btnradio3"></input>
-                                    <label className="btn btn-outline-primary" htmlFor="btnradio3">Radio 3</label>
-                                </div>
-                            </div>
+                <div className="row input-group search-filter">
+                    <div className="col-8 search-container">
+                        <div className="form-control" >
+                            <input type="search" placeholder="search" id="searchInput" value={searchInput}
+                                   onKeyDown={(input) => handleSearch(input.key, true)} onChange={(searchInput) => handleSearch(searchInput.target.value, false)}/>
+                            <button className="search-button" onClick={searchFilms}>
+                                <i className="bi bi-search"></i>
+                            </button>
                         </div>
-                        <div className={"card-deck"}>
-                            {FilmsList()}
+
+                    </div>
+
+                    <div className="col-4 dropdown">
+                        <button className="form-control dropdown-toggle" type="button"
+                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                            Genre
+                        </button>
+                        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            {getGenreContent()}
                         </div>
+                    </div>
+
+                    <div className="col-4 dropdown">
+                        <button className="form-control dropdown-toggle" type="button"
+                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                            Age Rating
+                        </button>
+                        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            {getAgeRatingContent()}
+                        </div>
+                    </div>
+
                 </div>
+
+                <div className="row film-cards">
+                    {FilmsList()}
+                </div>
+
             </div>
-        )
-    }
+    )
 }
 
 

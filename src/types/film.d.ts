@@ -29,6 +29,6 @@ type Genre = {
     /**
      * Genre as defined by the database
      */
-    id: number,
+    genreId: number,
     name : string,
 }
