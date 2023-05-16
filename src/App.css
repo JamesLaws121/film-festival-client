@@ -38,7 +38,7 @@ input[type="search"] {
   padding: 2px;
   border: none;
   border-radius: 5px;
-  margin: 0 0 30px;
+  margin: 0 0 10px;
 }
 
 .search-button {
@@ -69,7 +69,7 @@ p {
 }
 
 .film-card {
-  margin: 20px;
+  margin: 1.5rem;
 }
 
 .film-card-body {
@@ -81,11 +81,23 @@ p {
 }
 
 .search-filter {
-  gap:10px;
-  margin: 50px;
+  margin-bottom: 30px;
+  justify-content: center;
+}
+
+.search-filter-content {
+  margin: 10px;
   justify-content: center;
 }
 
 .card-img-top {
   margin-top: 10px;
+}
+
+.pagination {
+  justify-content: center;
+}
+
+.page-link {
+  font-size: 25px;
 }

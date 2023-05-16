@@ -12,13 +12,16 @@ const Films = () => {
     const [searchInput, setSearch] = useState("");
     const [genreInput, setGenre] = useState <Array<number>>([]);
     const [ageInput, setAge] = useState <Array<string>>([]);
+    const [sortOrder, setSortOrder] = useState("ALPHABETICAL_ASC");
+    const [size, setsize] = useState(8);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
 
-    const [requestString, setRequestString] = useState("");
 
     useEffect(() => {
         GetFilms();
         GetFilmGenres();
-    }, [genreInput, ageInput])
+    }, [genreInput, ageInput, sortOrder])
 
 
     const createRequestString = () => {
@@ -34,8 +37,9 @@ const Films = () => {
             }
         }
         if (searchInput !== "") {
-            tempRequestString += 'q=' + searchInput;
+            tempRequestString += 'q=' + searchInput + '&';
         }
+        tempRequestString += "sortBy=" + sortOrder;
 
         return tempRequestString;
     }
@@ -45,10 +49,14 @@ const Films = () => {
                 setErrorFlag(false);
                 setErrorMessage("");
                 setFilms(response.data.films);
+                console.log(response.data.films);
+                setTotalPages(Math.ceil((response.data.count)/size));
+                console.log(Math.ceil((response.data.count)/size));
                 }, (error) => {
                 setErrorFlag(true);
                 setErrorMessage(error.toString());
             })
+
     }
     const GetFilmGenres = () => {
         axios.get('https://seng365.csse.canterbury.ac.nz/api/v1/films/genres')
@@ -96,6 +104,10 @@ const Films = () => {
         setAge(tempAges);
     };
 
+    const handleSortOrder = (input: string) => {
+        setSortOrder(input);
+    }
+
     function FilmsList() {
         if (errorFlag) {
             return (
@@ -104,8 +116,10 @@ const Films = () => {
                         {errorMessage}
                     </div>
                 </div>
-            ) } else { return (films.map((value: Film) =>
-                <div className="card col-3 film-card shadow" key={value.filmId}>
+            ) } else {
+            let paginatedFilms = films.slice(page*size, (page*size)+size);
+            return (paginatedFilms.map((value: Film) =>
+                <div className="card col-2 film-card shadow" key={value.filmId}>
                     <Link to={"/films/" + value.filmId}>
                         <img src={"https://seng365.csse.canterbury.ac.nz/api/v1/films/" + value.filmId + "/image"}
                              className="card-img-top" alt="Card image cap"></img>
@@ -115,7 +129,7 @@ const Films = () => {
                         <p className="card-text">{value.ageRating}</p>
                         <p className="card-text">Release: {value.releaseDate.toString().split('T')[0]}</p>
                         <p className="card-text">Director: {value.directorFirstName + " " + value.directorLastName}</p>
-                        <p className="card-text">{value.rating + " Out of 10 from average user scores"}</p>
+                        <p className="card-text">{parseFloat(value.rating)*10 + "%"}</p>
                     </div>
                 </div>
             )
@@ -142,11 +156,23 @@ const Films = () => {
             )
         )
     }
+
+    function getPaginationButtons() {
+        let pageNumbers = Array.from({length: totalPages+1}, (x, i) => i);
+        pageNumbers.shift();
+        return (pageNumbers.map((pageNumber) =>
+                    <div key={"pagination"+pageNumber}>
+                        <li className={"page-item" + (pageNumber === page ? " active" : "")}><a className="page-link" onClick={()=>setPage(pageNumber)}>{pageNumber}</a></li>
+                    </div>
+            )
+        )
+    }
     return (
         <div style={{width: "100%"}}>
             <h1>Films</h1>
+            <div className="search-filter">
 
-                <div className="row input-group search-filter">
+                <div className="row input-group search-filter-content">
                     <div className="col-9 search-container">
                         <div className="form-control" >
                             <input type="search" placeholder="search" id="searchInput" value={searchInput}
@@ -158,7 +184,7 @@ const Films = () => {
 
                     </div>
                 </div>
-            <div className="row input-group search-filter">
+                <div className="row input-group search-filter-content">
                     <div className="col-3 dropdown">
                         <button className="form-control dropdown-toggle" type="button"
                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -182,23 +208,32 @@ const Films = () => {
                     </div>
 
                     <div className="col-3">
-                        <select className="select form-control">
+                        <select className="select form-control" onChange={e => handleSortOrder(e.target.value)} defaultValue={"ALPHABETICAL_ASC"}>
                             <option value="ALPHABETICAL_ASC">ALPHABETICAL_ASC</option>
                             <option value="ALPHABETICAL_DESC">ALPHABETICAL_DESC</option>
-                            <option selected value="RELEASED_ASC">RELEASED_ASC</option>
+                            <option value="RELEASED_ASC">RELEASED_ASC</option>
                             <option value="RELEASED_DESC">RELEASED_DESC</option>
                             <option value="RATING_ASC">RATING_ASC</option>
                             <option value="RATING_DESC">RATING_DESC</option>
                         </select>
                     </div>
-
                 </div>
-
-                <div className="row film-cards">
-                    {FilmsList()}
-                </div>
-
             </div>
+
+            <div className="row film-cards">
+                {FilmsList()}
+            </div>
+
+
+            <nav>
+                <ul className="pagination">
+                    <li className="page-item"><a className="page-link" onClick={()=>setPage(page-1 > 0 ? page-1 : page)}>Previous</a></li>
+                    {getPaginationButtons()}
+                    <li className="page-item"><a className="page-link" onClick={()=>setPage(page+1 < totalPages ? page+1 : page)}>Next</a></li>
+                </ul>
+            </nav>
+
+        </div>
     )
 }
 
