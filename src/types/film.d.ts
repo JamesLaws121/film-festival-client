@@ -1,6 +1,6 @@
 type Film = {
     /**
-     * Film as defined by the Get Film
+     * Film as defined by the Get Films
      */
     filmId: number,
     title : string,
@@ -13,19 +13,36 @@ type Film = {
     directorFirstName: string,
     directorLastName: string,
     rating: string;
+}
 
+type IndividualFilm = {
+    /**
+     * Film as defined by the Get Film
+     */
+    filmId: number,
+    title : string,
+    releaseDate : Date,
+    runtime : number,
+    directorId : number,
+    genreId : number,
+    ageRating : string,
+    directorFirstName: string,
+    directorLastName: string,
+    rating: string;
+    "description": string,
+    "numReviews": string,
 }
 
 type FilmReview = {
     /**
-     * Film as defined by the database
+     * Film review as defined by get film review
      */
-    id: number,
-    film_id : number,
-    user_id : number,
-    rating : number,
+    reviewerId: number,
+    rating : string,
     review : string,
     timestamp : Date,
+    reviewerFirstName: string,
+    reviewerLastName: string,
 }
 
 type Genre = {

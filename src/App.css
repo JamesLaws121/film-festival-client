@@ -101,3 +101,11 @@ p {
 .page-link {
   font-size: 25px;
 }
+
+.form-check {
+  margin-left: 10px;
+}
+
+.form-check-label {
+  width:100%;
+}

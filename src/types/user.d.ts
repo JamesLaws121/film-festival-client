@@ -10,3 +10,11 @@ type User = {
     image_filename : string,
 }
 
+type UserAuthentication = {
+    /**
+     * Authentication as defined by log in
+     */
+    id: number,
+    token : string,
+}
+

@@ -3,6 +3,7 @@ import React, {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
 import axios from "axios";
 import {forEach} from "react-bootstrap/ElementChildren";
+import defaultImage from "../static/john-travolta.gif";
 
 const Films = () => {
     const [films, setFilms] = useState <Array<Film>>([]);
@@ -49,9 +50,8 @@ const Films = () => {
                 setErrorFlag(false);
                 setErrorMessage("");
                 setFilms(response.data.films);
-                console.log(response.data.films);
                 setTotalPages(Math.ceil((response.data.count)/size));
-                console.log(Math.ceil((response.data.count)/size));
+                setPage(0);
                 }, (error) => {
                 setErrorFlag(true);
                 setErrorMessage(error.toString());
@@ -120,10 +120,8 @@ const Films = () => {
             let paginatedFilms = films.slice(page*size, (page*size)+size);
             return (paginatedFilms.map((value: Film) =>
                 <div className="card col-2 film-card shadow" key={value.filmId}>
-                    <Link to={"/films/" + value.filmId}>
-                        <img src={"https://seng365.csse.canterbury.ac.nz/api/v1/films/" + value.filmId + "/image"}
-                             className="card-img-top" alt="Card image cap"></img>
-                    </Link>
+                    <img src={"https://seng365.csse.canterbury.ac.nz/api/v1/films/" + value.filmId + "/image"}
+                         className="card-img-top" onError={(target) => target.currentTarget.src = defaultImage}></img>
                     <div className="card-body film-card-body">
                         <h5 className="card-title">{value.title}</h5>
                         <p className="card-text">{value.ageRating}</p>
@@ -131,6 +129,7 @@ const Films = () => {
                         <p className="card-text">Director: {value.directorFirstName + " " + value.directorLastName}</p>
                         <p className="card-text">{parseFloat(value.rating)*10 + "%"}</p>
                     </div>
+                    <a href={"/film?id=" + value.filmId} className="stretched-link"></a>
                 </div>
             )
         )
@@ -158,11 +157,11 @@ const Films = () => {
     }
 
     function getPaginationButtons() {
-        let pageNumbers = Array.from({length: totalPages+1}, (x, i) => i);
-        pageNumbers.shift();
+        let pageNumbers = Array.from({length: totalPages}, (x, i) => i);
         return (pageNumbers.map((pageNumber) =>
                     <div key={"pagination"+pageNumber}>
-                        <li className={"page-item" + (pageNumber === page ? " active" : "")}><a className="page-link" onClick={()=>setPage(pageNumber)}>{pageNumber}</a></li>
+                        <li className={"page-item" + (pageNumber === page ? " active" : "")}>
+                            <a className="page-link" onClick={()=>setPage(pageNumber)}>{pageNumber+1}</a></li>
                     </div>
             )
         )
@@ -176,7 +175,8 @@ const Films = () => {
                     <div className="col-9 search-container">
                         <div className="form-control" >
                             <input type="search" placeholder="search" id="searchInput" value={searchInput}
-                                   onKeyDown={(input) => handleSearch(input.key, true)} onChange={(searchInput) => handleSearch(searchInput.target.value, false)}/>
+                                   onKeyDown={(input) => handleSearch(input.key, true)}
+                                   onChange={(searchInput) => handleSearch(searchInput.target.value, false)}/>
                             <button className="search-button" onClick={searchFilms}>
                                 <i className="bi bi-search"></i>
                             </button>
