@@ -16,8 +16,8 @@ const EditFilm = () => {
                             <input type="text" className="form-control" id="titleInput" placeholder="Title"></input>
                         </div>
                         <div className="form-group col-md-6">
-                            <label className="medium mb-1" htmlFor="inputPassword4">Description</label>
-                            <input type="text" className="form-control" id="inputPassword4" placeholder="Description"></input>
+                            <label className="medium mb-1" htmlFor="descriptionInput">Description</label>
+                            <input type="text" className="form-control" id="descriptionInput" placeholder="Description"></input>
                         </div>
                         <div className="form-group col-md-6">
                             <label className="medium mb-1" htmlFor="releaseInput">Release Date</label>
@@ -29,7 +29,7 @@ const EditFilm = () => {
                         </div>
 
                         <div className="form-group col-md-6">
-                            <label className="medium mb-1" htmlFor="releaseInput">Genre</label>
+                            <label className="medium mb-1" htmlFor="genreInput">Genre</label>
                             <select className="form-control" id="genreInput">
                                 <option value="1">One</option>
                                 <option value="2">Two</option>
@@ -37,7 +37,7 @@ const EditFilm = () => {
                             </select>
                         </div>
                         <div className="form-group col-md-6">
-                            <label className="medium mb-1" htmlFor="releaseInput">Age Rating</label>
+                            <label className="medium mb-1" htmlFor="ageInput">Age Rating</label>
                             <select className="form-control" id="ageInput">
                                 <option value="1">One</option>
                                 <option value="2">Two</option>

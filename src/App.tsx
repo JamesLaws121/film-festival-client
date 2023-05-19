@@ -15,55 +15,81 @@ import EditProfile from "./user/EditProfile";
 
 
 const App = () => {
-    const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication>();
+    const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication | null>();
 
     useEffect(() => {
         const loggedInUser = sessionStorage.getItem("user");
         if (loggedInUser) {
-            console.log(loggedInUser)
             try {
                 const foundUser = JSON.parse(loggedInUser);
-                console.log(foundUser)
                 setUserAuthenticity(foundUser);
             } catch (error) {
                 console.log(error);
             }
-
-
         }
     }, []);
 
+    const logout = () => {
+        sessionStorage.setItem('user', "");
+        setUserAuthenticity(null);
+    }
+
+
+    const getNavBar = () => {
+        if (userAuthenticity !== null) {
+            return (
+                <div>
+                    <nav className="navbar navbar-expand-lg">
+                        <ul className="navbar-nav">
+                            <li className="nav-item">
+                                <Link to="/films" className="nav-link">Films</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/profile" className="nav-link">Profile</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/films" className="nav-link" onClick={() => logout()}>Logout</Link>
+                            </li>
+                            <div className="dropdown">
+                                <li className="nav-item">
+                                    <Link to="/myfilms" className="nav-link">Manage your films</Link>
+                                </li>
+                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li className="nav-item"><Link to="/myfilms" className="nav-link">My Films</Link></li>
+                                    <li className="nav-item"><Link to="/editfilm" className="nav-link">Edit Film</Link></li>
+                                    <li className="nav-item"><Link to="/createfilm" className="nav-link">Create Film</Link></li>
+                                </ul>
+                            </div>
+                        </ul>
+                    </nav>
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    <nav className="navbar navbar-expand-lg">
+                        <ul className="navbar-nav">
+                            <li className="nav-item">
+                                <Link to="/films" className="nav-link">Films</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/login" className="nav-link">Login</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/register" className="nav-link">Register</Link>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            )
+        }
+
+    }
 
     return (
         <div className="App">
             <Router>
-                <nav className="navbar navbar-expand-lg">
-                    <ul className="navbar-nav">
-                        <li className="nav-item">
-                            <Link to="/films" className="nav-link">Films</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to="/profile" className="nav-link">Profile</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to="/login" className="nav-link">Login</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to="/register" className="nav-link">Register</Link>
-                        </li>
-
-                        <div className="dropdown">
-                            <li className="nav-item">
-                                <Link to="/myfilms" className="nav-link">Manage your films</Link>
-                            </li>
-                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <li className="nav-item"><Link to="/myfilms" className="nav-link">My Films</Link></li>
-                                <li className="nav-item"><Link to="/editfilm" className="nav-link">Edit Film</Link></li>
-                                <li className="nav-item"><Link to="/createfilm" className="nav-link">Create Film</Link></li>
-                            </ul>
-                        </div>
-                    </ul>
-                </nav>
+                {getNavBar()}
                 <Routes>
                     <Route path="/film" element={<ViewFilm/>}/>
                     <Route path="/myfilms" element={<MyFilms/>}/>
