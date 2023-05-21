@@ -10,7 +10,7 @@ const MyFilms = () => {
         <div>
             <h1>My Films</h1>
             <body>
-            {Films()}
+            <p>Work in progress</p>
             </body>
         </div>
     )

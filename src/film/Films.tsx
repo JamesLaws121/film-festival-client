@@ -45,7 +45,7 @@ const Films = () => {
         return tempRequestString;
     }
     const GetFilms = () => {
-        axios.get("https://seng365.csse.canterbury.ac.nz/api/v1/films?" + createRequestString())
+        axios.get("http://localhost:4941/api/v1/films?" + createRequestString())
             .then((response) => {
                 setErrorFlag(false);
                 setErrorMessage("");
@@ -59,7 +59,7 @@ const Films = () => {
 
     }
     const GetFilmGenres = () => {
-        axios.get('https://seng365.csse.canterbury.ac.nz/api/v1/films/genres')
+        axios.get('http://localhost:4941/api/v1/films/genres')
             .then((response) => {
                 setErrorFlag(false);
                 setErrorMessage("");
@@ -108,6 +108,7 @@ const Films = () => {
         setSortOrder(input);
     }
 
+
     function FilmsList() {
         if (errorFlag) {
             return (
@@ -117,22 +118,29 @@ const Films = () => {
                     </div>
                 </div>
             ) } else {
+
             let paginatedFilms = films.slice(page*size, (page*size)+size);
-            return (paginatedFilms.map((value: Film) =>
+
+            return paginatedFilms.map((value: Film) =>
                 <div className="card col-2 film-card shadow" key={value.filmId}>
-                    <img src={"https://seng365.csse.canterbury.ac.nz/api/v1/films/" + value.filmId + "/image"}
+                    <img src={"http://localhost:4941/api/v1/films/" + value.filmId + "/image"}
                          className="card-img-top" onError={(target) => target.currentTarget.src = defaultImage}></img>
                     <div className="card-body film-card-body">
                         <h5 className="card-title">{value.title}</h5>
-                        <p className="card-text">{value.ageRating}</p>
+                        <p className="card-text">{"Rating: " + value.ageRating}</p>
+                        <p className="card-text">{"Genre: " + filmGenres.find(element => element.genreId === value.genreId)?.name}</p>
                         <p className="card-text">Release: {value.releaseDate.toString().split('T')[0]}</p>
-                        <p className="card-text">Director: {value.directorFirstName + " " + value.directorLastName}</p>
-                        <p className="card-text">{parseFloat(value.rating)*10 + "%"}</p>
+                        <h2 className="card-text">{parseFloat(value.rating)*10 + "%"}</h2>
+                        <div className="director-values">
+                            <img src={"http://localhost:4941/api/v1/users/" + value.directorId + "/image"}
+                                 className="director-image" onError={(target) => target.currentTarget.src = defaultImage}></img>
+                            <p className="card-text">Director: {value.directorFirstName + " " + value.directorLastName}</p>
+                        </div>
+
                     </div>
                     <a href={"/film?id=" + value.filmId} className="stretched-link"></a>
                 </div>
             )
-        )
         }
     }
     function getGenreContent() {

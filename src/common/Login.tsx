@@ -17,7 +17,7 @@ const Login = () => {
 
     const postLogin = async (e: any) => {
         e.preventDefault();
-        axios.post("https://seng365.csse.canterbury.ac.nz/api/v1/users/login", {
+        axios.post("http://localhost:4941/api/v1/users/login", {
             email: email,
             password: password
         }).then((response) => {
@@ -28,7 +28,7 @@ const Login = () => {
             setErrorMessage("");
             window.location.reload();
         }).catch((error) => {
-            setErrorMessage(error);
+            setErrorMessage(error.response.statusText);
         });
     }
 
@@ -47,7 +47,7 @@ const Login = () => {
                            onChange={(searchInput) => setPassword(searchInput.target.value)} required/>
                 </div>
                 <div className="form-group invalid-feedback" style={{display: checkError()}}>
-                    <label>Incorrect Email and password</label>
+                    <label>{errorMessage.toString()}</label>
                 </div>
                 <button type="submit" className="btn btn-primary">Login</button>
             </form>

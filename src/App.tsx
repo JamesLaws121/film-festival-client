@@ -19,7 +19,7 @@ const App = () => {
 
     useEffect(() => {
         const loggedInUser = sessionStorage.getItem("user");
-        if (loggedInUser) {
+        if (loggedInUser != null && loggedInUser.length != 0) {
             try {
                 const foundUser = JSON.parse(loggedInUser);
                 setUserAuthenticity(foundUser);
@@ -27,10 +27,13 @@ const App = () => {
                 console.log(error);
             }
         }
+        else {
+            setUserAuthenticity(null);
+        }
     }, []);
 
     const logout = () => {
-        sessionStorage.setItem('user', "");
+        sessionStorage.setItem('user',"");
         setUserAuthenticity(null);
     }
 
@@ -47,9 +50,6 @@ const App = () => {
                             <li className="nav-item">
                                 <Link to="/profile" className="nav-link">Profile</Link>
                             </li>
-                            <li className="nav-item">
-                                <Link to="/films" className="nav-link" onClick={() => logout()}>Logout</Link>
-                            </li>
                             <div className="dropdown">
                                 <li className="nav-item">
                                     <Link to="/myfilms" className="nav-link">Manage your films</Link>
@@ -60,6 +60,9 @@ const App = () => {
                                     <li className="nav-item"><Link to="/createfilm" className="nav-link">Create Film</Link></li>
                                 </ul>
                             </div>
+                            <li className="nav-item">
+                                <Link to="/films" className="nav-link" onClick={() => logout()}>Logout</Link>
+                            </li>
                         </ul>
                     </nav>
                 </div>

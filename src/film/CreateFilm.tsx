@@ -1,14 +1,50 @@
 import axios from "axios";
-import React from "react";
+import React, {useState} from "react";
 import '../App.css';
+import {useNavigate} from "react-router-dom";
 
 
 
 const CreateFilm = () => {
+    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState("");
+    const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication>();
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [releaseDate, setReleaseDate] = useState("");
+    const [genreId, setGenreId] = useState("");
+    const [runtime, setRuntime] = useState("");
+    const [ageRating, setAgeRating] = useState("");
+
+
+    const checkError = () => {
+        return errorMessage? "block" : "none";
+    }
+    const postCreate= async (e: any) => {
+        e.preventDefault();
+        axios.post("http://localhost:4941/api/v1/films", {
+            title: e.title,
+            description: e.description,
+            releaseDate: e.releaseDate,
+            genreId: e.genreId,
+            runtime: e.runtime,
+            ageRating: e.ageRating
+        }).then((response) => {
+            setUserAuthenticity(response.data.userId);
+            const data = JSON.stringify(response.data);
+            sessionStorage.setItem('user', data);
+            navigate('/profile');
+            window.location.reload();
+            setErrorMessage("");
+        }).catch((error) => {
+            setErrorMessage(error.response.statusText);
+        });
+    }
+
     return (
         <div>
             <h1>Create Film</h1>
-            <form>
+            <form onSubmit={postCreate}>
                 <div className="card container py-5">
                 <div className="row g-2">
                     <div className="form-group col-md-6">
@@ -47,6 +83,9 @@ const CreateFilm = () => {
                     <div className="form-group col-md-12 py-3">
                         <label htmlFor="imageInput">Film image</label>
                         <input type="file" className="form-control" id="imageInput"></input>
+                    </div>
+                    <div className="form-group invalid-feedback" style={{display: checkError()}}>
+                        <label>{errorMessage.toString()}</label>
                     </div>
                 </div>
                 </div>

@@ -11,30 +11,41 @@ const Register = () => {
     const [lastName, setLastName] = useState("");
     const [password, setPassword] = useState("");
     const [userId, setUserId] = useState(0);
-    const [errorMessage, setErrorMessage] = useState("");
     const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication>();
     const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState("");
 
     const checkError = () => {
         return errorMessage? "block" : "none";
     }
-
-    const postRegister = async (e: any) => {
+    const postLogin = async (e: any) => {
         e.preventDefault();
-        axios.post("https://seng365.csse.canterbury.ac.nz/api/v1/users/register", {
+        axios.post("http://localhost:4941/api/v1/users/login", {
             email: email,
-            firstName: firstName,
-            lastName: lastName,
             password: password
         }).then((response) => {
             setUserAuthenticity(response.data.userId);
             const data = JSON.stringify(response.data);
             sessionStorage.setItem('user', data);
             navigate('/profile');
-            setErrorMessage("");
             window.location.reload();
+            setErrorMessage("");
         }).catch((error) => {
-            setErrorMessage(error);
+            setErrorMessage(error.response.statusText);
+        });
+    }
+
+    const postRegister = async (e: any) => {
+        e.preventDefault();
+        axios.post("http://localhost:4941/api/v1/users/register", {
+            email: email,
+            firstName: firstName,
+            lastName: lastName,
+            password: password
+        }).then((response) => {
+            postLogin(e);
+        }).catch((error) => {
+            setErrorMessage(error.response.statusText);
         });
     }
 
@@ -64,7 +75,7 @@ const Register = () => {
                            onChange={(searchInput) => setPassword(searchInput.target.value)}/>
                 </div>
                 <div className="form-group invalid-feedback" style={{display: checkError()}}>
-                    <label>Incorrect Email and password</label>
+                    <label>{errorMessage.toString()}</label>
                 </div>
                 <button type="submit" className="btn btn-primary">Register</button>
             </form>
