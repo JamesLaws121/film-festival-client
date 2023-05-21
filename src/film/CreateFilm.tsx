@@ -12,7 +12,6 @@ const CreateFilm = () => {
     const [errorFlag, setErrorFlag] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
-
     const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication | null>();
 
     useEffect(() => {
@@ -41,6 +40,30 @@ const CreateFilm = () => {
         },{
             headers: {
             'X-Authorization': userAuthenticity?.token,
+            }
+        }).then((response) => {
+            if (e.target.filmImage) {
+                putFilmImage(e);
+            } else {
+                navigate('/film?id=' + response.data.filmId);
+                window.location.reload();
+            }
+
+            setErrorMessage("");
+        }).catch((error) => {
+            setErrorMessage(error.response.statusText);
+        });
+    }
+
+    const putFilmImage= async (e: any) => {
+        e.preventDefault();
+        console.log(userAuthenticity?.token)
+        axios.put("http://localhost:4941/api/v1/films" + userAuthenticity?.userId + "/image", {
+            file :e.target.filmImage.value,
+        },{
+            headers: {
+                'X-Authorization': userAuthenticity?.token,
+                'Content-Type': "image/jpeg",
             }
         }).then((response) => {
             console.log(response.data)
@@ -115,7 +138,7 @@ const CreateFilm = () => {
                     </div>
                     <div className="form-group col-md-12 py-3">
                         <label htmlFor="imageInput">Film image</label>
-                        <input type="file" className="form-control" id="imageInput"></input>
+                        <input type="file" className="form-control" id="imageInput" name="filmImage"></input>
                     </div>
                     <div className="form-group invalid-feedback" style={{display: checkError()}}>
                         <label>{errorMessage.toString()}</label>
