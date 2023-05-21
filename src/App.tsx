@@ -12,23 +12,15 @@ import CreateFilm from "./film/CreateFilm";
 import MyFilms from "./film/MyFilms";
 import ViewFilm from "./film/ViewFilm";
 import EditProfile from "./user/EditProfile";
+import Authenticate from "./common/Authenticate";
 
 
 const App = () => {
     const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication | null>();
 
     useEffect(() => {
-        const loggedInUser = sessionStorage.getItem("user");
-        if (loggedInUser != null && loggedInUser.length != 0) {
-            try {
-                const foundUser = JSON.parse(loggedInUser);
-                setUserAuthenticity(foundUser);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        else {
-            setUserAuthenticity(null);
+        if (Authenticate()) {
+            setUserAuthenticity(Authenticate())
         }
     }, []);
 
