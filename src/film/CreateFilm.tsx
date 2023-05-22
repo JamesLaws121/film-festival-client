@@ -29,7 +29,6 @@ const CreateFilm = () => {
     }
     const postCreate= async (e: any) => {
         e.preventDefault();
-        console.log(userAuthenticity?.token)
         axios.post("http://localhost:4941/api/v1/films", {
             title: e.target.title.value,
             description: e.target.description.value,
@@ -43,7 +42,7 @@ const CreateFilm = () => {
             }
         }).then((response) => {
             if (e.target.filmImage) {
-                putFilmImage(e);
+                putFilmImage(e, response.data.filmId);
             } else {
                 navigate('/film?id=' + response.data.filmId);
                 window.location.reload();
@@ -55,19 +54,19 @@ const CreateFilm = () => {
         });
     }
 
-    const putFilmImage= async (e: any) => {
+    const putFilmImage= async (e: any, newFilmId : number) => {
         e.preventDefault();
-        console.log(userAuthenticity?.token)
-        axios.put("http://localhost:4941/api/v1/films" + userAuthenticity?.userId + "/image", {
-            file :e.target.filmImage.value,
-        },{
+        let filmImage = e.target.filmImage.files[0]
+        console.log(filmImage)
+        console.log(filmImage.File)
+        axios.put("http://localhost:4941/api/v1/films/" + newFilmId+ "/image", filmImage ,{
             headers: {
                 'X-Authorization': userAuthenticity?.token,
-                'Content-Type': "image/jpeg",
+                'Content-Type': filmImage.type,
             }
         }).then((response) => {
             console.log(response.data)
-            navigate('/film?id=' + response.data.filmId);
+            navigate('/film?id=' + newFilmId);
             window.location.reload();
             setErrorMessage("");
         }).catch((error) => {
@@ -144,8 +143,8 @@ const CreateFilm = () => {
                         <label>{errorMessage.toString()}</label>
                     </div>
                 </div>
+                    <button type="submit" className="btn btn-primary">Submit</button>
                 </div>
-                <button type="submit" className="btn btn-primary">Submit</button>
             </form>
         </div>
     )

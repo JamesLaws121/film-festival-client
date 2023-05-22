@@ -44,11 +44,10 @@ const App = () => {
                             </li>
                             <div className="dropdown">
                                 <li className="nav-item">
-                                    <Link to="/myfilms" className="nav-link">Manage your films</Link>
+                                    <Link to="/myFilms" className="nav-link">Manage your films</Link>
                                 </li>
                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <li className="nav-item"><Link to="/myfilms" className="nav-link">My Films</Link></li>
-                                    <li className="nav-item"><Link to="/editfilm" className="nav-link">Edit Film</Link></li>
+                                    <li className="nav-item"><Link to="/myFilms" className="nav-link">My Films</Link></li>
                                     <li className="nav-item"><Link to="/createfilm" className="nav-link">Create Film</Link></li>
                                 </ul>
                             </div>

@@ -119,3 +119,7 @@ p {
 .director-image {
   width: 50%;
 }
+
+.description-box {
+  height: 200px;
+}

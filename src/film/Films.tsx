@@ -1,11 +1,13 @@
 
 import React, {useState, useEffect} from "react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import axios from "axios";
 import {forEach} from "react-bootstrap/ElementChildren";
 import defaultImage from "../static/john-travolta.gif";
+import Authenticate from "../common/Authenticate";
 
 const Films = () => {
+    const navigate = useNavigate();
     const [films, setFilms] = useState <Array<Film>>([]);
     const [filmGenres, setFilmGenres] = useState <Array<Genre>>([]);
     const [errorFlag, setErrorFlag] = useState(false);
@@ -22,6 +24,7 @@ const Films = () => {
     useEffect(() => {
         GetFilms();
         GetFilmGenres();
+
     }, [genreInput, ageInput, sortOrder])
 
 
@@ -56,7 +59,6 @@ const Films = () => {
                 setErrorFlag(true);
                 setErrorMessage(error.toString());
             })
-
     }
     const GetFilmGenres = () => {
         axios.get('http://localhost:4941/api/v1/films/genres')

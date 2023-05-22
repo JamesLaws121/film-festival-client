@@ -21,7 +21,7 @@ type IndividualFilm = {
      */
     filmId: number,
     title : string,
-    releaseDate : Date,
+    releaseDate : string,
     runtime : number,
     directorId : number,
     genreId : number,
