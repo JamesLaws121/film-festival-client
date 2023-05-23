@@ -10,6 +10,7 @@ const Login = () => {
     const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication>();
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState("");
+    const [errorFlag, setErrorFlag] = useState(false);
 
     const checkError = () => {
         return errorMessage? "block" : "none";
@@ -26,9 +27,11 @@ const Login = () => {
             sessionStorage.setItem('user', data);
             navigate('/profile');
             setErrorMessage("");
+            setErrorFlag(false);
             window.location.reload();
         }).catch((error) => {
             setErrorMessage(error.response.statusText);
+            setErrorFlag(true);
         });
     }
 

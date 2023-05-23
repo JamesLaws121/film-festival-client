@@ -13,10 +13,11 @@ const Register = () => {
     const [userId, setUserId] = useState(0);
     const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication>();
     const navigate = useNavigate();
+    const [errorFlag, setErrorFlag] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
     const checkError = () => {
-        return errorMessage? "block" : "none";
+        return errorFlag? "block" : "none";
     }
     const postLogin = async (e: any) => {
         e.preventDefault();
@@ -30,8 +31,10 @@ const Register = () => {
             navigate('/profile');
             window.location.reload();
             setErrorMessage("");
+            setErrorFlag(false);
         }).catch((error) => {
             setErrorMessage(error.response.statusText);
+            setErrorFlag(true);
         });
     }
 
@@ -44,8 +47,10 @@ const Register = () => {
             password: password
         }).then((response) => {
             postLogin(e);
+            setErrorFlag(false);
         }).catch((error) => {
             setErrorMessage(error.response.statusText);
+            setErrorFlag(true);
         });
     }
 

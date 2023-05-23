@@ -13,23 +13,25 @@ import MyFilms from "./film/MyFilms";
 import ViewFilm from "./film/ViewFilm";
 import EditProfile from "./user/EditProfile";
 import Authenticate from "./common/Authenticate";
+import ReviewFilm from "./film/ReviewFilm";
+import axios from "axios/index";
+import Logout from "./common/Logout";
 
 
 const App = () => {
     const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication | null>();
 
     useEffect(() => {
-        if (Authenticate()) {
-            setUserAuthenticity(Authenticate())
-        }
+        setUserAuthenticity(Authenticate())
     }, []);
 
+
     const logout = () => {
-        sessionStorage.setItem('user',"");
-        setUserAuthenticity(null);
+        if (userAuthenticity) {
+            const loggedOut = Logout(userAuthenticity.token);
+            setUserAuthenticity(null);
+        }
     }
-
-
     const getNavBar = () => {
         if (userAuthenticity !== null) {
             return (
@@ -94,6 +96,7 @@ const App = () => {
                     <Route path="/profile" element={<Profile/>}/>
                     <Route path="/editProfile" element={<EditProfile/>}/>
                     <Route path="/films" element={<Films/>}/>
+                    <Route path="/reviewfilm" element={<ReviewFilm/>}/>
                     <Route path="*" element={<Films/>}/>
                 </Routes>
             </Router>

@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import '../App.css';
-import Films from "./Films";
 import Authenticate from "../common/Authenticate";
 import {useNavigate} from "react-router-dom";
 import defaultImage from "../static/john-travolta.gif";
@@ -16,21 +15,22 @@ const MyFilms = () => {
     const [errorFlag, setErrorFlag] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [filmGenres, setFilmGenres] = useState <Array<Genre>>([]);
-
-    let userId = 0;
+    const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication | null>();
 
 
     useEffect(() => {
-        let authentication = Authenticate();
-        if (authentication) {
-            userId = authentication.userId
-            GetFilmsDirected();
-            GetFilmsReviewed();
+        const authenticity = Authenticate();
+        if (authenticity) {
+            setUserAuthenticity(authenticity);
+            GetFilmsDirected(authenticity.userId);
+            GetFilmsReviewed(authenticity.userId);
+            GetFilmGenres();
         } else {
             navigate('/films');
             window.location.reload();
         }
     }, [])
+
     useEffect(() => {
         createFilmsList();
     }, [filmsReviewed, filmsDirected])
@@ -50,7 +50,7 @@ const MyFilms = () => {
     const createFilmsList = () => {
         setFilms(filmsDirected.concat(filmsReviewed));
     }
-    const GetFilmsDirected = () => {
+    const GetFilmsDirected = (userId: number) => {
         axios.get("http://localhost:4941/api/v1/films?directorId=" + userId)
             .then((response) => {
                 setErrorFlag(false);
@@ -62,7 +62,7 @@ const MyFilms = () => {
             })
     }
 
-    const GetFilmsReviewed = () => {
+    const GetFilmsReviewed = (userId: number) => {
         axios.get("http://localhost:4941/api/v1/films?reviewerId=" + userId)
             .then((response) => {
                 setErrorFlag(false);
@@ -82,10 +82,16 @@ const MyFilms = () => {
                         {errorMessage}
                     </div>
                 </div>
-            ) } else {
+            ) }
+        else if(films.length === 0){
+            return <div>
+                <label>You have not directed or reviewed any films</label>
+            </div>}
+
+        else{
             return films.map((value: Film) =>
                 <div className="card col-2 film-card shadow" key={value.filmId}>
-                    <img src={"http://localhost:4941/api/v1/films/" + value.filmId + "/image"}
+                    <img src={"http://localhost:4941/api/v1/films/" + value.filmId + "/image"} alt="Error"
                          className="card-img-top" onError={(target) => target.currentTarget.src = defaultImage}></img>
                     <div className="card-body film-card-body">
                         <h5 className="card-title">{value.title}</h5>
@@ -94,13 +100,13 @@ const MyFilms = () => {
                         <p className="card-text">Release: {value.releaseDate.toString().split('T')[0]}</p>
                         <h2 className="card-text">{parseFloat(value.rating)*10 + "%"}</h2>
                         <div className="director-values">
-                            <img src={"http://localhost:4941/api/v1/users/" + value.directorId + "/image"}
+                            <img src={"http://localhost:4941/api/v1/users/" + value.directorId + "/image"} alt="Error"
                                  className="director-image" onError={(target) => target.currentTarget.src = defaultImage}></img>
                             <p className="card-text">Director: {value.directorFirstName + " " + value.directorLastName}</p>
                         </div>
 
                     </div>
-                    <a href={"/film?id=" + value.filmId} className="stretched-link"></a>
+                    <a href={"/film?id=" + value.filmId} className="stretched-link"> </a>
                 </div>
             )
         }

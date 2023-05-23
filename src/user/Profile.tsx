@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import '../App.css';
 import {Link} from "react-router-dom";
 import defaultImage from "../static/john-travolta.gif";
+import Authenticate from "../common/Authenticate";
 
 
 
@@ -14,31 +15,23 @@ const Profile = () => {
 
 
     useEffect(() => {
-        const loggedInUser = sessionStorage.getItem("user");
-        if (loggedInUser != null && loggedInUser.length != 0) {
-            try {
-                const foundUser = JSON.parse(loggedInUser);
-                setUserAuthenticity(foundUser);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        else {
-            setUserAuthenticity(null);
-        }
+        setUserAuthenticity(Authenticate());
     }, []);
 
     useEffect(() => {
         GetProfile();
-    }, [userAuthenticity])
+    }, [userAuthenticity]);
 
     const GetProfile = () => {
-        console.log(userAuthenticity)
-        if (userAuthenticity == null) {
-            return;
+        if (!userAuthenticity) {
+            return
         }
-        axios.get('http://localhost:4941/api/v1/users/' + userAuthenticity.userId)
-            .then((response) => {
+        axios.get('http://localhost:4941/api/v1/users/' + userAuthenticity.userId ,
+            {
+                headers: {
+                    'X-Authorization': userAuthenticity?.token,
+                }
+            }).then((response) => {
                 setEmail(response.data.email);
                 setFirstName(response.data.firstName);
                 setLastName(response.data.lastName);
@@ -47,31 +40,36 @@ const Profile = () => {
             })
     }
 
-    if (userAuthenticity == null) {
-        return (
-            <div>
-                <h1> ERROR, Not logged in</h1>
-            </div>
-        )
-    } else {
-        return (
-            <div className={"card"}>
-                <h2 className="mb-2">User Name</h2>
-                <img src={"http://localhost:4941/api/v1/user/" + userAuthenticity.userId + "/image"}
+    const profileCard = () => {
+        if (!userAuthenticity) {
+            return (
+                <div>
+                    <h1> ERROR, Not logged in</h1>
+                </div>
+            )
+        } else {
+            return (<div className={"card"}>
+                <h2 className="mb-2">{firstName + " " + lastName}</h2>
+                <img src={"http://localhost:4941/api/v1/users/" + userAuthenticity.userId + "/image"} alt={"error"}
                      className="card-img-top" onError={(target) => target.currentTarget.src = defaultImage}></img>
 
-                <h4 className="mb-2">{email}</h4>
-                <p>{firstName}</p>
-                <p>{lastName}</p>
+                <p>{email}</p>
 
                 <button type="button" className="btn btn-outline-dark" data-mdb-ripple-color="dark">
                     <Link to="/editProfile" className="nav-link">Edit profile</Link>
                 </button>
 
             </div>
-        )
+            )
+        }
     }
 
+    return (
+        <div>
+            {profileCard()}
+        </div>
+
+    )
 }
 
 export default Profile;

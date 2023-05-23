@@ -15,17 +15,18 @@ const CreateFilm = () => {
     const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication | null>();
 
     useEffect(() => {
-        if (Authenticate()) {
-            setUserAuthenticity(Authenticate())
+        const authenticate = Authenticate()
+        if (authenticate) {
+            setUserAuthenticity(authenticate)
             GetFilmGenres();
         } else {
             navigate('/films');
             window.location.reload();
         }
-    }, []);
+    }, [navigate]);
 
     const checkError = () => {
-        return errorMessage? "block" : "none";
+        return errorFlag? "block" : "none";
     }
     const postCreate= async (e: any) => {
         e.preventDefault();
@@ -47,18 +48,17 @@ const CreateFilm = () => {
                 navigate('/film?id=' + response.data.filmId);
                 window.location.reload();
             }
-
             setErrorMessage("");
+            setErrorFlag(false);
         }).catch((error) => {
             setErrorMessage(error.response.statusText);
+            setErrorFlag(true);
         });
     }
 
     const putFilmImage= async (e: any, newFilmId : number) => {
         e.preventDefault();
         let filmImage = e.target.filmImage.files[0]
-        console.log(filmImage)
-        console.log(filmImage.File)
         axios.put("http://localhost:4941/api/v1/films/" + newFilmId+ "/image", filmImage ,{
             headers: {
                 'X-Authorization': userAuthenticity?.token,
@@ -69,8 +69,10 @@ const CreateFilm = () => {
             navigate('/film?id=' + newFilmId);
             window.location.reload();
             setErrorMessage("");
+            setErrorFlag(false);
         }).catch((error) => {
             setErrorMessage(error.response.statusText);
+            setErrorFlag(true);
         });
     }
 

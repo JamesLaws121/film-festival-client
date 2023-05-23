@@ -1,10 +1,8 @@
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import '../App.css';
-import CreateFilm from "./CreateFilm";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import Authenticate from "../common/Authenticate";
-import defaultImage from "../static/john-travolta.gif";
 
 
 
@@ -17,23 +15,22 @@ const EditFilm = () => {
     const [errorMessage, setErrorMessage] = useState("");
 
     const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication | null>();
-    let filmId = '0';
 
     useEffect(() => {
         const tmpFilmId = searchParams.get("id");
-        if (Authenticate() && tmpFilmId !== null) {
-            filmId = tmpFilmId;
-            setUserAuthenticity(Authenticate());
-            GetFilm();
+        const authenticate = Authenticate()
+        if (authenticate && tmpFilmId !== null) {
+            setUserAuthenticity(authenticate);
+            GetFilm(tmpFilmId);
             GetFilmGenres();
         } else {
             navigate('/films');
             window.location.reload();
         }
-    }, []);
+    }, [navigate, searchParams]);
 
     const checkError = () => {
-        return errorMessage? "block" : "none";
+        return errorFlag? "block" : "none";
     }
 
     const GetFilmGenres = () => {
@@ -62,10 +59,13 @@ const EditFilm = () => {
         )
     }
 
-    const GetFilm = () => {
+    const GetFilm = (filmId: string) => {
         axios.get("http://localhost:4941/api/v1/films/" + filmId)
             .then((response) => {
-                setFilm(response.data);
+                let film = response.data;
+                film.filmId = parseInt(filmId);
+                setFilm(film);
+
                 setErrorFlag(false);
                 setErrorMessage("");
             }, (error) => {
@@ -76,8 +76,12 @@ const EditFilm = () => {
 
     const patchEdit = async (e: any) => {
         e.preventDefault();
-        console.log(userAuthenticity?.token)
-        axios.patch("http://localhost:4941/api/v1/films/" + film?.filmId, {
+        if (!film) {
+            setErrorFlag(true);
+            setErrorMessage("Error in film Id, please try again in a few minutes.")
+            return
+        }
+        axios.patch("http://localhost:4941/api/v1/films/" + film.filmId, {
             title: e.target.title.value,
             description: e.target.description.value,
             releaseDate: e.target.releaseDate.value.replace('T', ' ') + ":00",
@@ -89,36 +93,42 @@ const EditFilm = () => {
                 'X-Authorization': userAuthenticity?.token,
             }
         }).then((response) => {
-            if (e.target.filmImage) {
+            if (e.target.filmImage.files[0]) {
                 putFilmImage(e);
             } else {
-                navigate('/film?id=' + response.data.filmId);
+                navigate('/film?id=' + film.filmId);
                 window.location.reload();
             }
-
             setErrorMessage("");
+            setErrorFlag(false);
         }).catch((error) => {
             setErrorMessage(error.response.statusText);
+            setErrorFlag(true);
         });
     }
 
     const putFilmImage= async (e: any) => {
+        if (!film) {
+            setErrorFlag(true);
+            setErrorMessage("Error in film Id, please try again in a few minutes.")
+            return
+        }
         e.preventDefault();
-        console.log(userAuthenticity?.token)
-        axios.put("http://localhost:4941/api/v1/films" + userAuthenticity?.userId + "/image", {
-            file :e.target.filmImage.value,
-        },{
+        let filmImage = e.target.filmImage.files[0]
+        axios.put("http://localhost:4941/api/v1/films/" + film.filmId + "/image", filmImage ,{
             headers: {
                 'X-Authorization': userAuthenticity?.token,
-                'Content-Type': "image/jpeg",
+                'Content-Type': filmImage.type,
             }
         }).then((response) => {
             console.log(response.data)
-            navigate('/film?id=' + response.data.filmId);
+            navigate('/film?id=' + film.filmId);
             window.location.reload();
             setErrorMessage("");
+            setErrorFlag(false);
         }).catch((error) => {
             setErrorMessage(error.response.statusText);
+            setErrorFlag(true);
         });
     }
 

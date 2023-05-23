@@ -1,10 +1,8 @@
-import {useState} from "react";
-
 
 const Authenticate = () => {
 
     const loggedInUser = sessionStorage.getItem("user");
-    if (loggedInUser != null && loggedInUser.length != 0) {
+    if (loggedInUser !== null && loggedInUser.length !== 0) {
         try {
             const foundUser = JSON.parse(loggedInUser);
             return foundUser;

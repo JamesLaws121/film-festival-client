@@ -1,13 +1,9 @@
 
-import React, {useState, useEffect} from "react";
-import {Link, useNavigate, useSearchParams} from "react-router-dom";
+import React, {useState, useEffect, useCallback} from "react";
 import axios from "axios";
-import {forEach} from "react-bootstrap/ElementChildren";
 import defaultImage from "../static/john-travolta.gif";
-import Authenticate from "../common/Authenticate";
 
 const Films = () => {
-    const navigate = useNavigate();
     const [films, setFilms] = useState <Array<Film>>([]);
     const [filmGenres, setFilmGenres] = useState <Array<Genre>>([]);
     const [errorFlag, setErrorFlag] = useState(false);
@@ -16,19 +12,13 @@ const Films = () => {
     const [genreInput, setGenre] = useState <Array<number>>([]);
     const [ageInput, setAge] = useState <Array<string>>([]);
     const [sortOrder, setSortOrder] = useState("ALPHABETICAL_ASC");
-    const [size, setsize] = useState(8);
+    const [size] = useState(10);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
 
-    useEffect(() => {
-        GetFilms();
-        GetFilmGenres();
 
-    }, [genreInput, ageInput, sortOrder])
-
-
-    const createRequestString = () => {
+    const createRequestString = useCallback(() => {
         let tempRequestString = "";
         if (genreInput.length !== 0) {
             for(let i = 0; i < genreInput.length; i++) {
@@ -46,8 +36,9 @@ const Films = () => {
         tempRequestString += "sortBy=" + sortOrder;
 
         return tempRequestString;
-    }
-    const GetFilms = () => {
+    }, [ageInput, genreInput, searchInput, sortOrder])
+
+    const GetFilms = useCallback(() => {
         axios.get("http://localhost:4941/api/v1/films?" + createRequestString())
             .then((response) => {
                 setErrorFlag(false);
@@ -55,11 +46,19 @@ const Films = () => {
                 setFilms(response.data.films);
                 setTotalPages(Math.ceil((response.data.count)/size));
                 setPage(0);
-                }, (error) => {
+            }, (error) => {
                 setErrorFlag(true);
                 setErrorMessage(error.toString());
             })
-    }
+    }, [createRequestString, size])
+
+    useEffect(() => {
+        GetFilms();
+        GetFilmGenres();
+
+    }, [genreInput, ageInput, sortOrder, GetFilms])
+
+
     const GetFilmGenres = () => {
         axios.get('http://localhost:4941/api/v1/films/genres')
             .then((response) => {
@@ -85,7 +84,7 @@ const Films = () => {
     };
 
     const handleFilterGenre = (checkInput: number) => {
-        let tempGenres = new Array<number>;
+        let tempGenres = new Array<number>();
         tempGenres = tempGenres.concat(genreInput);
         if (tempGenres.includes(checkInput)) {
             tempGenres.splice(tempGenres.indexOf(checkInput), 1);
@@ -96,7 +95,7 @@ const Films = () => {
     };
 
     const handleFilterAge = (checkInput : string) => {
-        let tempAges = new Array<string>;
+        let tempAges = new Array<string>();
         tempAges = tempAges.concat(ageInput);
         if (tempAges.includes(checkInput)) {
             tempAges.splice(tempAges.indexOf(checkInput), 1);
@@ -125,7 +124,7 @@ const Films = () => {
 
             return paginatedFilms.map((value: Film) =>
                 <div className="card col-2 film-card shadow" key={value.filmId}>
-                    <img src={"http://localhost:4941/api/v1/films/" + value.filmId + "/image"}
+                    <img src={"http://localhost:4941/api/v1/films/" + value.filmId + "/image"} alt="Error"
                          className="card-img-top" onError={(target) => target.currentTarget.src = defaultImage}></img>
                     <div className="card-body film-card-body">
                         <h5 className="card-title">{value.title}</h5>
@@ -134,13 +133,13 @@ const Films = () => {
                         <p className="card-text">Release: {value.releaseDate.toString().split('T')[0]}</p>
                         <h2 className="card-text">{parseFloat(value.rating)*10 + "%"}</h2>
                         <div className="director-values">
-                            <img src={"http://localhost:4941/api/v1/users/" + value.directorId + "/image"}
+                            <img src={"http://localhost:4941/api/v1/users/" + value.directorId + "/image"} alt="Error"
                                  className="director-image" onError={(target) => target.currentTarget.src = defaultImage}></img>
                             <p className="card-text">Director: {value.directorFirstName + " " + value.directorLastName}</p>
                         </div>
 
                     </div>
-                    <a href={"/film?id=" + value.filmId} className="stretched-link"></a>
+                    <a href={"/film?id=" + value.filmId} className="stretched-link"> </a>
                 </div>
             )
         }
@@ -171,7 +170,7 @@ const Films = () => {
         return (pageNumbers.map((pageNumber) =>
                     <div key={"pagination"+pageNumber}>
                         <li className={"page-item" + (pageNumber === page ? " active" : "")}>
-                            <a className="page-link" onClick={()=>setPage(pageNumber)}>{pageNumber+1}</a></li>
+                            <button className="page-link" onClick={()=>setPage(pageNumber)}>{pageNumber+1}</button></li>
                     </div>
             )
         )
@@ -219,12 +218,12 @@ const Films = () => {
 
                     <div className="col-3">
                         <select className="select form-control" onChange={e => handleSortOrder(e.target.value)} defaultValue={"ALPHABETICAL_ASC"}>
-                            <option value="ALPHABETICAL_ASC">ALPHABETICAL_ASC</option>
-                            <option value="ALPHABETICAL_DESC">ALPHABETICAL_DESC</option>
-                            <option value="RELEASED_ASC">RELEASED_ASC</option>
-                            <option value="RELEASED_DESC">RELEASED_DESC</option>
-                            <option value="RATING_ASC">RATING_ASC</option>
-                            <option value="RATING_DESC">RATING_DESC</option>
+                            <option value="ALPHABETICAL_ASC">Alphabetical Ascending</option>
+                            <option value="ALPHABETICAL_DESC">Alphabetical Descending</option>
+                            <option value="RELEASED_ASC">Released Ascending</option>
+                            <option value="RELEASED_DESC">Released Descending</option>
+                            <option value="RATING_ASC">Rating Ascending</option>
+                            <option value="RATING_DESC">Rating Descending</option>
                         </select>
                     </div>
                 </div>
@@ -237,9 +236,11 @@ const Films = () => {
 
             <nav>
                 <ul className="pagination">
-                    <li className="page-item"><a className="page-link" onClick={()=>setPage(page-1 > 0 ? page-1 : page)}>Previous</a></li>
+                    <li className="page-item"><button className="page-link" onClick={()=>setPage(0)}>First</button></li>
+                    <li className="page-item"><button className="page-link" onClick={()=>setPage(page > 0 ? page-1 : page)}>Previous</button></li>
                     {getPaginationButtons()}
-                    <li className="page-item"><a className="page-link" onClick={()=>setPage(page+1 < totalPages ? page+1 : page)}>Next</a></li>
+                    <li className="page-item" ><button className="page-link" onClick={()=>setPage(page+1 < totalPages ? page+1 : page)}>Next</button></li>
+                    <li className="page-item"><button className="page-link" onClick={()=>setPage(totalPages-1)}>Last</button></li>
                 </ul>
             </nav>
 
