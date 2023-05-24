@@ -169,7 +169,7 @@ const EditFilm = () => {
                             </select>
                         </div>
                         <div className="form-group col-md-3 py-3 edit-image-box">
-                            <label htmlFor="imageInput"><h3>Film image</h3></label>
+                            <label htmlFor="imageInput"><h4>Change film image</h4></label>
                             <input type="file" className="form-control" id="imageInput" name="filmImage"/>
                         </div>
                         <div className="form-group invalid-feedback" style={{display: checkError()}}>

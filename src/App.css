@@ -123,3 +123,14 @@ p {
 .description-box {
   height: 200px;
 }
+
+.register-form {
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.iconSize {
+  font-size: 200%;
+  margin: 20%;
+}

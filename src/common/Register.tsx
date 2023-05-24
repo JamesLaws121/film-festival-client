@@ -15,6 +15,7 @@ const Register = () => {
     const navigate = useNavigate();
     const [errorFlag, setErrorFlag] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [passwordFlag, setPasswordFlag] = useState(true);
 
     useEffect(() => {
         const authenticate = Authenticate()
@@ -35,14 +36,38 @@ const Register = () => {
             email: email,
             password: password
         }).then((response) => {
-            setUserAuthenticity(response.data.userId);
+            setUserAuthenticity(response.data);
             const data = JSON.stringify(response.data);
             sessionStorage.setItem('user', data);
-            navigate('/profile');
+            if (e.target.profileImage.files[0]) {
+                putProfileImage(e, response.data.userId, response.data.token);
+            } else {
+                navigate('/profile');
+                window.location.reload();
+            }
+            setErrorMessage("");
+            setErrorFlag(false);
+        }).catch((error) => {
+            setErrorMessage(error.response.statusText);
+            setErrorFlag(true);
+        });
+    }
+
+    const putProfileImage = (e: any, userId: number, token: string) => {
+        e.preventDefault();
+        let profileImage = e.target.profileImage.files[0]
+        axios.put("http://localhost:4941/api/v1/users/" + userId + "/image", profileImage ,{
+            headers: {
+                'X-Authorization': token,
+                'Content-Type': profileImage.type,
+            }
+        }).then((response) => {
+            navigate('/profile?id=' + userId);
             window.location.reload();
             setErrorMessage("");
             setErrorFlag(false);
         }).catch((error) => {
+            console.log(error)
             setErrorMessage(error.response.statusText);
             setErrorFlag(true);
         });
@@ -64,11 +89,18 @@ const Register = () => {
         });
     }
 
+    const togglePassword = () => {
+        setPasswordFlag(!passwordFlag);
+    }
+
+    const getPasswordToggle = () => {
+        return passwordFlag? "password" as const: "text" as const;
+    }
 
     return (
         <div>
             <h1>Register</h1>
-            <form onSubmit={postRegister}>
+            <form onSubmit={postRegister} className="register-form">
                 <div className="form-group">
                     <label htmlFor={"firstNameInput"}>First Name</label>
                     <input id ="emailInput" className={"form-control"}
@@ -86,13 +118,25 @@ const Register = () => {
                 </div>
                 <div className="form-group">
                     <label htmlFor={"passwordInput"}>Password</label>
-                    <input type="password" id ="passwordInput" className={"form-control"}
-                           onChange={(searchInput) => setPassword(searchInput.target.value)}/>
+                    <div style={{display: "flex"}}>
+                        <input type={""+getPasswordToggle()} id ="passwordInput" className={"form-control"}
+                               onChange={(searchInput) => setPassword(searchInput.target.value)}/>
+                        <a className="button" role="button" onClick={togglePassword}>
+                            <i className="bi bi-eye iconSize"></i>
+                        </a>
+                    </div>
+
                 </div>
                 <div className="form-group invalid-feedback" style={{display: checkError()}}>
                     <label>{errorMessage.toString()}</label>
                 </div>
-                <button type="submit" className="btn btn-primary">Register</button>
+                <div className="form-group">
+                    <label>Profile picture</label>
+                    <input className={"form-control"} type={"file"} name="profileImage"></input>
+                </div>
+                <div className="form-group">
+                    <button type="submit" className="btn btn-outline-dark form-control" data-mdb-ripple-color="dark">Register</button>
+                </div>
             </form>
         </div>
     )

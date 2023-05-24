@@ -174,7 +174,7 @@ const ViewFilm = () => {
         }
     }
     const editOption = () => {
-        if (userAuthenticity && film && userAuthenticity.userId === film.directorId) {
+        if (userAuthenticity && film && userAuthenticity.userId === film.directorId && reviews.length == 0) {
             return (<a className="btn btn-outline-dark form-control" role="button" href={"/editFilm?id=" + film.filmId}>Edit</a>)
         } else {
             return (

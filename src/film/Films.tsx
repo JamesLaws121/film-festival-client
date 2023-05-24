@@ -11,8 +11,8 @@ const Films = () => {
     const [searchInput, setSearch] = useState("");
     const [genreInput, setGenre] = useState <Array<number>>([]);
     const [ageInput, setAge] = useState <Array<string>>([]);
-    const [sortOrder, setSortOrder] = useState("ALPHABETICAL_ASC");
-    const [size] = useState(10);
+    const [sortOrder, setSortOrder] = useState("RELEASED_ASC");
+    const [size] = useState(8);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
@@ -217,11 +217,11 @@ const Films = () => {
                     </div>
 
                     <div className="col-3">
-                        <select className="select form-control" onChange={e => handleSortOrder(e.target.value)} defaultValue={"ALPHABETICAL_ASC"}>
-                            <option value="ALPHABETICAL_ASC">Alphabetical Ascending</option>
-                            <option value="ALPHABETICAL_DESC">Alphabetical Descending</option>
+                        <select className="select form-control" onChange={e => handleSortOrder(e.target.value)} defaultValue={"RELEASED_ASC"}>
                             <option value="RELEASED_ASC">Released Ascending</option>
                             <option value="RELEASED_DESC">Released Descending</option>
+                            <option value="ALPHABETICAL_ASC">Alphabetical Ascending</option>
+                            <option value="ALPHABETICAL_DESC">Alphabetical Descending</option>
                             <option value="RATING_ASC">Rating Ascending</option>
                             <option value="RATING_DESC">Rating Descending</option>
                         </select>

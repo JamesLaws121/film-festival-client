@@ -33,7 +33,7 @@ const Login = () => {
             email: email,
             password: password
         }).then((response) => {
-            setUserAuthenticity(response.data.userId);
+            setUserAuthenticity(response.data);
             const data = JSON.stringify(response.data);
             sessionStorage.setItem('user', data);
             navigate('/profile');

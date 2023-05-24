@@ -168,7 +168,6 @@ const EditProfile = () => {
                     </div>
                 </div>
 
-
                 <div className={"row"}>
                     <div className={"col-12"}>
                         <button type="submit" className="btn btn-outline-dark form-control" data-mdb-ripple-color="dark">Save changes</button>
