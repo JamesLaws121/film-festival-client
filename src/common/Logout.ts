@@ -7,7 +7,6 @@ const logout = (token: string) => {
         }
     }).then((response) => {
         sessionStorage.removeItem('user');
-        console.log(response);
         return true;
     }).catch((error) => {
         console.log(error);

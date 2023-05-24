@@ -1,7 +1,8 @@
 import axios from "axios";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import '../App.css';
 import {useNavigate} from "react-router-dom";
+import Authenticate from "./Authenticate";
 
 
 
@@ -10,11 +11,20 @@ const Register = () => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [password, setPassword] = useState("");
-    const [userId, setUserId] = useState(0);
     const [userAuthenticity, setUserAuthenticity] = useState <UserAuthentication>();
     const navigate = useNavigate();
     const [errorFlag, setErrorFlag] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+
+    useEffect(() => {
+        const authenticate = Authenticate()
+        console.log(authenticate)
+        if (authenticate) {
+            setUserAuthenticity(authenticate)
+            navigate('/films');
+            window.location.reload();
+        }
+    }, []);
 
     const checkError = () => {
         return errorFlag? "block" : "none";

@@ -5,6 +5,8 @@ import Films from "./film/Films";
 import Profile from "./user/Profile";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'bootstrap/dist/js/bootstrap.min.js'
+import 'jquery/dist/jquery.min.js'
 import Register from "./common/Register";
 import Login from "./common/Login";
 import EditFilm from "./film/EditFilm";
@@ -14,7 +16,6 @@ import ViewFilm from "./film/ViewFilm";
 import EditProfile from "./user/EditProfile";
 import Authenticate from "./common/Authenticate";
 import ReviewFilm from "./film/ReviewFilm";
-import axios from "axios/index";
 import Logout from "./common/Logout";
 
 

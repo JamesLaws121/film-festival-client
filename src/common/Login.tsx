@@ -1,7 +1,8 @@
 import axios from "axios";
-import React, {useContext, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import '../App.css';
 import {useNavigate} from "react-router-dom";
+import Authenticate from "./Authenticate";
 
 
 const Login = () => {
@@ -12,8 +13,18 @@ const Login = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [errorFlag, setErrorFlag] = useState(false);
 
+    useEffect(() => {
+        const authenticate = Authenticate()
+        console.log(authenticate)
+        if (authenticate) {
+            setUserAuthenticity(authenticate)
+            navigate('/films');
+            window.location.reload();
+        }
+    }, []);
+
     const checkError = () => {
-        return errorMessage? "block" : "none";
+        return errorFlag? "block" : "none";
     }
 
     const postLogin = async (e: any) => {

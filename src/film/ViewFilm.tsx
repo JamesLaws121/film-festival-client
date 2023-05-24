@@ -3,11 +3,14 @@ import React, {useEffect, useState} from "react";
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import {useSearchParams} from "react-router-dom";
+import 'bootstrap/dist/js/bootstrap.min.js'
+import 'jquery/dist/jquery.min.js'
+import {useNavigate, useSearchParams} from "react-router-dom";
 import defaultImage from "../static/john-travolta.gif";
 import Authenticate from "../common/Authenticate";
 
 const ViewFilm = () => {
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [film, setFilm] = useState <IndividualFilm>();
     const [reviews, setReviews] = useState <Array<FilmReview>>([]);
@@ -172,7 +175,42 @@ const ViewFilm = () => {
     }
     const editOption = () => {
         if (userAuthenticity && film && userAuthenticity.userId === film.directorId) {
-            return (<a className="btn btn-primary" role="button" href={"/editFilm?id=" + film.filmId}>Edit</a>)
+            return (<a className="btn btn-outline-dark form-control" role="button" href={"/editFilm?id=" + film.filmId}>Edit</a>)
+        } else {
+            return (
+                <div></div>
+            )
+        }
+    }
+
+    const deleteFilm = async (e: any) => {
+        const filmId = searchParams.get("id");
+        if (!filmId) {
+            console.log("error film id error")
+            setErrorMessage("error film id error");
+            setErrorFlag(true);
+            return
+        }
+        e.preventDefault();
+        axios.delete("http://localhost:4941/api/v1/films/" + filmId,{
+            headers: {
+                'X-Authorization': userAuthenticity?.token,
+            }
+        }).then((response) => {
+            navigate('/films');
+            window.location.reload();
+            setErrorMessage("");
+            setErrorFlag(false);
+        }).catch((error) => {
+            console.log(error)
+            setErrorMessage(error.response.statusText);
+            setErrorFlag(true);
+        });
+    }
+
+    const deleteOption = () => {
+        if (userAuthenticity && film && userAuthenticity.userId === film.directorId) {
+            return (<button type="button" className="btn btn-outline-dark form-control" data-bs-toggle="modal" data-bs-target="#deleteFilmModal">Delete Film</button>)
         } else {
             return (
                 <div></div>
@@ -185,7 +223,7 @@ const ViewFilm = () => {
         }
         else {
             if (film && userAuthenticity.userId !== film.directorId) {
-                return (<a className="btn btn-primary" role="button" href={"/reviewfilm?id=" + film.filmId}>Place review</a>)
+                return (<a className="btn btn-outline-dark form-control" role="button" href={"/reviewfilm?id=" + film.filmId}>Place review</a>)
             } else {
                 return (<div><label>You can't review your own film.</label></div>)
             }
@@ -215,6 +253,31 @@ const ViewFilm = () => {
                             <p className="card-text">{parseFloat(film.rating) * 10 + "% From " + film.numReviews + " reviews"}</p>
                         </div>
                         {editOption()}
+                        {deleteOption()}
+
+                        <div className="modal" id="deleteFilmModal" tabIndex={-1} role="dialog"
+                             aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+                            <div className="modal-dialog" role="document">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h5 className="modal-title" id="deleteUserModalLabel">Delete User</h5>
+                                        <button type="button" className="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div className="modal-body">
+                                        Are you sure that you want to delete this film?
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                                            Close
+                                        </button>
+                                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={(e) => deleteFilm(e)}>Delete Film</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         {reviewOption()}
                     </div>
 
