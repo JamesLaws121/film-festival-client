@@ -1,38 +1,136 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  width: 100%;
 }
 
 .App-link {
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.row-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  justify-content: center;
+}
+
+input[type="search"] {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  width: 95%;
+}
+
+.search-container {
+  color: #555;
+  padding: 2px;
+  border: none;
+  border-radius: 5px;
+  margin: 0 0 10px;
+}
+
+.search-button {
+  border: none;
+  width: 5%;
+  background: transparent;
+}
+
+.card {
+  width: 18rem;
+}
+
+.dropdown-menu {
+  width: 90%;
+}
+
+.dropdown:hover>.dropdown-menu {
+  display: block;
+}
+
+.dropdown>.dropdown-toggle:active {
+  pointer-events: none;
+}
+
+p {
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
+.film-card {
+  margin: 2.5rem;
+}
+
+.film-card-body {
+  border: black;
+}
+
+.film-cards {
+  justify-content: center;
+}
+
+.search-filter {
+  margin-bottom: 30px;
+  justify-content: center;
+}
+
+.search-filter-content {
+  margin: 10px;
+  justify-content: center;
+}
+
+.card-img-top {
+  margin-top: 10px;
+}
+
+.pagination {
+  justify-content: center;
+}
+
+.page-link {
+  font-size: 25px;
+}
+
+.form-check {
+  margin-left: 10px;
+}
+
+.form-check-label {
+  width:100%;
+}
+
+.director-values {
+  height: 6rem;
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+}
+.director-image {
+  width: 50%;
+}
+
+.description-box {
+  height: 200px;
+}
+
+.register-form {
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.iconSize {
+  font-size: 200%;
+  margin: 20%;
 }
